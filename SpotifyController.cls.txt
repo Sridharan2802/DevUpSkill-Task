@@ -1,0 +1,54 @@
+/**
+ * @description       : 
+ * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @group             : 
+ * @last modified on  : 02-02-2025
+ * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+**/
+
+public with sharing class SpotifyController {
+   
+   @AuraEnabled
+   public static String searchwithSpotify(String trackName)
+   {
+      
+      Http http = new Http();
+      HttpRequest request = new HttpRequest();
+      request.setMethod('GET');
+
+      String encodedName = EncodingUtil.urlEncode(trackName, 'UTF-8');
+
+      //https://api.spotify.com/v1/search?q=Despacito&type=track&limit=1
+
+      request.setEndpoint('callout:Spotify/v1/search?q=' +encodedName+'&type=track&limit=1');
+
+      try{
+           
+           Httpresponse response = http.send(request);
+
+           if(response.getStatusCode==200)
+           {
+                return response.getBody();
+           }
+
+           else
+           {
+               throw new throw new AuraHandledException(response.getBody());
+
+
+           }
+           
+
+
+      }
+      catch(Exception ex)
+      {
+         System.debug(ex.getMessage());
+         return ex.getMessage();
+
+
+      }
+
+
+   }
+}
